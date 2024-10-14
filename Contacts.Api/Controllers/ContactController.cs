@@ -40,20 +40,34 @@ namespace Contacts.Api.Controllers
         [Route("Create")]
         public async Task<ActionResult> AddContact(ContactModels contact)
         {
+            var status = new Status();
             await _contactService.AddContactAsync(contact);
-            return CreatedAtAction(nameof(GetContactById), new { id = contact.Id }, contact);
+            if (contact.Id > 0)
+            {
+                status.Message = "Saved successfully.";
+                status.StatusCode = StatusCodes.Status201Created;
+                //return CreatedAtAction(nameof(GetContactById), new { id = contact.Id }, contact);
+            }
+            return Ok(status);
         }
 
         [HttpPut]
         [Route("{id:int}")]
         public async Task<ActionResult> UpdateContact([FromRoute] int id,[FromBody] ContactModels contact)
         {
+            var status = new Status();
             if (id != contact.Id)
             {
                 return BadRequest();
             }
+
             await _contactService.UpdateContactAsync(contact);
-            return NoContent();
+            if (contact.Id > 0) {
+                status.Message = "Updated successfully.";
+                status.StatusCode = StatusCodes.Status200OK;
+            }
+            //return NoContent();
+            return Ok(status);
         }
 
         [HttpDelete]
