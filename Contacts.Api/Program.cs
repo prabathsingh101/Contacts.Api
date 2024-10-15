@@ -1,5 +1,7 @@
 
+using Contacts.Api.Exceptions;
 using Contacts.Api.Services;
+using Contacts.Api.Utility;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,7 +12,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<ContactService>();
-
+//builder.Services.AddExceptionHandler<BadRequestExceptionHandler>();
+//builder.Services.AddExceptionHandler<NotFoundExceptionHandler>();
 
 builder.Services.AddCors(options =>
 {
@@ -36,6 +39,9 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+//app.UseExceptionHandler(e => { });
+app.UseMiddleware(typeof(GlobalErrorHandlingMiddleware));
 
 app.MapControllers();
 app.UseCors("MyAllowSpecificOrigins");
